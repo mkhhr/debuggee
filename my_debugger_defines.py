@@ -19,13 +19,6 @@ LPTHREAD_START_ROUTINE = CFUNCTYPE(DWORD, LPVOID)
 # process runs in the security context of the calling
 # process.
 #
-# If the calling process is impersonating another user,
-# the new process uses the token for the calling process,
-# not the impersonating token. To run the new process in
-# the security context of the user represented by the 
-# impersonation token, use the CreateProcessAsUser or
-# CreateProcessWithLogonW function.
-#
 # Syntax
 # BOOL WINAPI CreateProcess(
 #   _In_opt_ LPCTSTR lpApplicationName,
@@ -39,60 +32,7 @@ LPTHREAD_START_ROUTINE = CFUNCTYPE(DWORD, LPVOID)
 #   _In_ LPSTARTUPINFO lpStartupInfo,
 #   _Out_ LPPROCESS_INFORMATION lpProcessInformation
 # );
-#
-# Parameters
-#
-# lpApplicationName [in, optional]
-#   The name of the module to be executed. This module can
-#   be a Windows-based application. It can be some other 
-#   type of module (for example, MS-DOS or OS/2) if the
-#   appropriate subsystem is avaliable on the local computer.
-#   The string can specify the full path and file name of 
-#   the module to execute or it can specify a partial name.
-#   In the case of a partial name, the function uses the
-#   current drive and current directory to complete the
-#   specification. The function will not use the search path.
-#   This parameter must include the file name extension; no
-#   default extension is assumed.
-#   The lpApplicationName parameter can be NULL. In that 
-#   case, the module name must be the first white space-
-#   delimited token in the lpCommandLine string. If you are
-#   using a long file name that contains a space, use quoted
-#   strings to indicate where the file name ends and the
-#   arguments begin; otherwise, the file name is ambiguous.
-#   If the executable module is a 16-bit application,
-#   lpApplicationName should be NULL, and the string pointed
-#   to by lpCommandLine should specify the executable module
-#   as well as its arguments.
-#   To run a batch file, you must start the command 
-#   interpreter; set lpApplicationName to cmd.exe and set
-#   lpCommandLine to the following arguments: /c plus the
-#   name of the batch file.
-# lpCommandLine [in, out, optional]
-#   The command line to be executed. The maximum length of
-#   this string is 32768 characters, including the Unicode
-#   terminationg null character. If lpApplicationName is
-#   NULL, the module name portion of lpCommandLine is
-#   limited to MAX_PATH characters.
-#   The Unicode version of this function, CreateProcessW,
-#   can modify the contents of this string. Therefore, this
-#   parameter cannot be a pointer to read-only memory (such
-#   as a const variable or a literal string). If this
-#   parameter is a constant string, the function may cause
-#   an access violation.
-#   The lpCommandLine parameter can be NULL. In that case,
-#   the function uses the string pointed to by lpApplication
-#   Name as the command line.
-#   If both lpApplicationName and lpCommandLine are non-NULL,
-#   the null-terminated string pointed to by lpApplication-
-#   Name specifies the module to execute, and the null-
-#   terminated string pointed to by lpCommandLine specifes
-#   the command line. The new process can use GetCommandLine
-#   to retrieve the entire command line. Console processes
-#   written in C can use the argc and argv arguments to parse
-#   the command line. Because argv[0] is the module name, C
-#   programmers generally repeat the module name as the first
-#   token in the command line.
+
 #Constants
 DEBUG_PROCESS = 0x00000001
 CREATE_NEW_CONSOLE = 0x00000010
@@ -288,3 +228,30 @@ DBG_EXCEPTION_NOT_HANDLED = 0x80010001
 # If the function succeed, the return value is nonzero.
 # If the function fails, the return value is zero. To get extended error
 #    information, call GetLastError.
+
+# Opens an existing thread object.
+# HANDLE WINAPI OpenThread (
+#   _In_ DWORD dwDesiredAccess,
+#   _In_ BOOL bInheritHanlde,
+#   _In_ DWORD dwThreadId
+# );
+#
+# dwDesiredAccess [in]
+#   The access to the thread object.
+# bInheritHandle [in]
+#   If this value is TRUE, processes created by this
+#   process will inherit the handlw.
+# dwThreadId [in]
+#   The indentifier of the thread to be opened.
+#
+# Return vlaue
+#   If the function succeeds, the return value is an open
+#   handle to the specified thread, else return NULL.
+
+# Takes a snapshot of the specified processes, as well as
+# the heaps, modules, and threads used by these processes.
+#
+# HANDLE WINAPI CreateToolhelp32Snapshot(
+#   _In_ DWORD dwFlags,
+#   _In_ DWORD th32ProcessID
+# );
